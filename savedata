@@ -1,0 +1,109 @@
+import 'package:flutter/material.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
+
+class Save extends StatefulWidget {
+  @override
+  State<Save> createState() => _SaveState();
+}
+
+class _SaveState extends State<Save> {
+  TextEditingController namecontroller1 = TextEditingController();
+  TextEditingController namecontroller2 = TextEditingController();
+  String storeName1 = 'name';
+  String storeName2 = 'surname';
+
+  _saveData() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setString('first_name', namecontroller1.text);
+    pref.setString('last_name', namecontroller2.text);
+
+    setState(() {
+      storeName1 = namecontroller1.text;
+      storeName2 = namecontroller2.text;
+    });
+    namecontroller1.clear();
+    namecontroller2.clear();
+  }
+
+  _loadData() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+    setState(() {
+      storeName1 = pref.getString('first_name') ?? storeName1;
+      storeName2 = pref.getString('last_name') ?? storeName2;
+    });
+  }
+
+  @override
+  void initState() {
+    _loadData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: const Color.fromARGB(255, 110, 158, 197),
+        foregroundColor: Colors.white,
+        title: Text('Shared Preferance'),
+      ),
+      body: Column(
+        children: [
+          SizedBox(
+            height: 20,
+          ),
+          Text("Name : $storeName1"),
+          Text("Surname : $storeName2"),
+          SizedBox(
+            height: 40,
+          ),
+          Center(
+            child: Container(
+              width: 400,
+              child: TextField(
+                controller: namecontroller1,
+                decoration: InputDecoration(
+                    labelText: "Enter a name",
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(color: Colors.blue)),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(color: Colors.blue))),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Center(
+            child: Container(
+              width: 400,
+              child: TextField(
+                controller: namecontroller2,
+                decoration: InputDecoration(
+                    labelText: "Enter a surname ",
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(color: Colors.blue)),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(color: Colors.blue))),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          ElevatedButton(
+              onPressed: () {
+                _saveData();
+              },
+              child: Text("Data Save"))
+        ],
+      ),
+    );
+  }
+}
